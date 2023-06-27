@@ -23,8 +23,9 @@ def page_candidate(cid):
 @app.route("/skill/<skill>")
 def page_skills(skill):
     string = f"<pre>\n"
+
     for candidate in list_candidates:
-        if skill.lower() in candidate.skills.lower():
+        if skill.lower() in candidate.skills.lower().split(', '):
             string += candidate.get_name_pos_skills()
     string += f"</pre>\n"
     return string
