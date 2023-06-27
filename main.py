@@ -1,5 +1,5 @@
 from flask import Flask
-import json
+import utils
 
 app = Flask(__name__)
 
@@ -7,39 +7,29 @@ app = Flask(__name__)
 @app.route('/')
 def page_main():
     string = f"<pre>\n"
-    for candidate in data:
-        string += f'Имя кандидата - {candidate["name"]}\n' \
-                  + f'Позиция кандидата - {candidate["position"]}\n' \
-                  + f'Навыки - {candidate["skills"]}\n'+ '\n'
-    string += f"</pre>\n"
+    for candidate in list_candidates:
+        string += candidate.get_name_pos_skills()
+    string += f"\n</pre>\n"
     return string
 
 
 @app.route("/candidate/<int:cid>")
 def page_candidate(cid):
-    candidate = data[cid-1]
-    string = f"<img src={candidate['picture']}>\n" + '\n<pre>\n'\
-             + f'Имя кандидата - {candidate["name"]}\n' \
-             + f'Позиция кандидата - {candidate["position"]}\n' \
-             + f'Навыки - {candidate["skills"]}\n'\
-             + f"</pre>\n"
+    candidate = list_candidates[cid-1]
+    string = candidate.get_img_nps()
     return string
 
 
 @app.route("/skill/<skill>")
 def page_skills(skill):
     string = f"<pre>\n"
-    for candidate in data:
-        if skill.lower() in candidate['skills'].lower():
-            string += f'Имя кандидата - {candidate["name"]}\n' \
-                    + f'Позиция кандидата - {candidate["position"]}\n' \
-                    + f'Навыки - {candidate["skills"]}\n' + '\n'
+    for candidate in list_candidates:
+        if skill.lower() in candidate.skills.lower():
+            string += candidate.get_name_pos_skills()
     string += f"</pre>\n"
     return string
 
 
-file = open('candidates.json', encoding='utf-8')
-data = json.load(file)
-file.close()
+list_candidates = utils.make_objects()
 
 app.run()
